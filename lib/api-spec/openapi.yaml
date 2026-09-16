@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: booking
+    description: TRIesa stay planning and availability
 paths:
   /healthz:
     get:
@@ -24,6 +26,77 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /availability:
+    get:
+      operationId: checkAvailability
+      tags: [booking]
+      summary: Check room availability
+      description: Checks whether the requested dates and room count can be accommodated.
+      parameters:
+        - name: checkIn
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: checkOut
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: guests
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - name: rooms
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 4
+      responses:
+        "200":
+          description: Availability result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Availability"
+        "400":
+          description: Invalid date range or request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /stay-requests:
+    post:
+      operationId: createStayRequest
+      tags: [booking]
+      summary: Submit a stay request
+      description: Stores a guest's request for the TRIesa house team to follow up.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StayRequestInput"
+      responses:
+        "201":
+          description: Stay request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StayRequest"
+        "400":
+          description: Invalid request or dates are unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +106,80 @@ components:
           type: string
       required:
         - status
+    Availability:
+      type: object
+      properties:
+        available:
+          type: boolean
+        roomsRequested:
+          type: integer
+        roomsAvailable:
+          type: integer
+        message:
+          type: string
+      required:
+        - available
+        - roomsRequested
+        - roomsAvailable
+        - message
+    StayRequestInput:
+      type: object
+      properties:
+        checkIn:
+          type: string
+          format: date
+        checkOut:
+          type: string
+          format: date
+        guests:
+          type: integer
+          minimum: 1
+          maximum: 12
+        rooms:
+          type: integer
+          minimum: 1
+          maximum: 4
+      required:
+        - checkIn
+        - checkOut
+        - guests
+        - rooms
+    StayRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference:
+          type: string
+        checkIn:
+          type: string
+          format: date
+        checkOut:
+          type: string
+          format: date
+        guests:
+          type: integer
+        rooms:
+          type: integer
+        status:
+          type: string
+          enum: [pending]
+        message:
+          type: string
+      required:
+        - id
+        - reference
+        - checkIn
+        - checkOut
+        - guests
+        - rooms
+        - status
+        - message
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
 
