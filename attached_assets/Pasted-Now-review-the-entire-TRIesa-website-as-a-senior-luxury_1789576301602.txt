@@ -1,0 +1,44 @@
+Now review the entire TRIesa website as a senior luxury-brand creative director and senior frontend engineer.
+
+Do NOT redesign it from scratch.
+
+Improve the existing implementation specifically in these areas:
+
+    Make the visual design more premium and less template-like.
+
+    Make the 3D experience more sophisticated and architectural.
+
+    Improve typography hierarchy.
+
+    Make animations smoother and more cinematic.
+
+    Improve spacing and composition.
+
+    Make the logo look like a genuine luxury hotel identity.
+
+    Make the hero section more impressive within the first 3 seconds.
+
+    Improve mobile responsiveness.
+
+    Remove any animation that feels excessive or cheap.
+
+    Improve performance and prevent 3D from causing lag.
+
+    Check every section for visual consistency.
+
+    Make sure the website feels like one coherent TRIesa brand.
+
+Think like a combination of:
+
+    Luxury hotel creative director
+
+    Award-winning web designer
+
+    3D art director
+
+    Senior React engineer
+
+Keep the design elegant, restrained and expensive-looking.
+
+Do not add random effects simply to make it “more animated.”
+Every animation should have a purpose.

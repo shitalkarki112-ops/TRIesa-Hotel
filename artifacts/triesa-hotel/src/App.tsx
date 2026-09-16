@@ -19,7 +19,10 @@ const images = [
 
 function Logo() {
   return <a href="#top" className="brand" data-testid="link-logo" aria-label="TRIesa home">
-    <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 7h24M16 7v19M9 12l7-5 7 5M8 26h16" /></svg>
+    <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M7 8h26M20 8v25M11 32h18" />
+      <path d="M14 32V14h6.5c5.3 0 8.5 2.5 8.5 6.6s-3.2 6.7-8.5 6.7H14M23.5 27.2 31 33" />
+    </svg>
     <span>TRIesa</span>
   </a>;
 }
@@ -66,7 +69,34 @@ function Reveal({ children, className = '' }: { children?: ReactNode; className?
 }
 
 function Hero() {
-  return <section className="hero" id="top">
+  const heroRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const node = heroRef.current;
+    if (!node || !window.matchMedia('(pointer: fine)').matches) return;
+    let frame = 0;
+    const move = (event: PointerEvent) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const bounds = node.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+        const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+        node.style.setProperty('--hero-x', x.toFixed(3));
+        node.style.setProperty('--hero-y', y.toFixed(3));
+      });
+    };
+    const leave = () => {
+      node.style.setProperty('--hero-x', '0');
+      node.style.setProperty('--hero-y', '0');
+    };
+    node.addEventListener('pointermove', move);
+    node.addEventListener('pointerleave', leave);
+    return () => {
+      cancelAnimationFrame(frame);
+      node.removeEventListener('pointermove', move);
+      node.removeEventListener('pointerleave', leave);
+    };
+  }, []);
+  return <section className="hero" id="top" ref={heroRef}>
     <div className="hero-bg" />
     <div className="sculpture" aria-hidden="true"><div /><div /><div /></div>
     <div className="hero-content">
@@ -90,6 +120,33 @@ function Intro() {
 
 function Architecture() {
   const [active, setActive] = useState('SUITES');
+  const visualRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = visualRef.current;
+    if (!node || !window.matchMedia('(pointer: fine)').matches) return;
+    let frame = 0;
+    const move = (event: PointerEvent) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const bounds = node.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+        const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+        node.style.setProperty('--scene-x', x.toFixed(3));
+        node.style.setProperty('--scene-y', y.toFixed(3));
+      });
+    };
+    const leave = () => {
+      node.style.setProperty('--scene-x', '0');
+      node.style.setProperty('--scene-y', '0');
+    };
+    node.addEventListener('pointermove', move);
+    node.addEventListener('pointerleave', leave);
+    return () => {
+      cancelAnimationFrame(frame);
+      node.removeEventListener('pointermove', move);
+      node.removeEventListener('pointerleave', leave);
+    };
+  }, []);
   const hotspots = [
     ['SUITES', 'The upper rooms', 'Quiet corners, west light, and a horizon beyond the city.'],
     ['RESTAURANT', 'Vela at ground level', 'An open kitchen, bright plates, and one long shared table.'],
@@ -98,7 +155,7 @@ function Architecture() {
   ] as const;
   const selected = hotspots.find(([name]) => name === active) ?? hotspots[0];
   return <section className="architecture" id="architecture">
-    <div className="architecture-visual">
+    <div className="architecture-visual" ref={visualRef}>
       <div className="arch-sculpture" aria-hidden="true"><span /><span /><span /></div>
       <div className="arch-stamp"><strong>III</strong> three ways<br />of seeing</div>
       <div className="architecture-hotspots" aria-label="Explore TRIesa spaces">
